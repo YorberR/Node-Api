@@ -1,4 +1,5 @@
 const express = require('express');
+const apiRouter = require('./server/index');
 const app = express();
 const port = 3000;
 
@@ -6,18 +7,9 @@ app.get('/', (req, res) => {
   res.send('Hello World!');
 });
 
-app.get('/help', (req, res) => {
-  res.status(200).send('Help Page');
-})
+apiRouter(app);
 
-app.get('/products', (req, res) => {
-  res.json({
-    'name': 'keyboard',
-    'price': 100,
-    'category': 'accessories'
-  });
-})
-
-app.listen(port, (req, res) => {
+app.listen(port, () => {
   console.log(`Example app listening at http://localhost:${port}`);
 });
+
