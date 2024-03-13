@@ -1,4 +1,5 @@
 const faker = require('faker');
+const boom = require('@hapi/boom');
 
 const getAllProducts = (req, res) => {
   try {
@@ -34,6 +35,9 @@ const creteNewProduct = (req, res) => {
 const updateProduct = (req, res) => {
   try {
     const {id} = req.params
+    if(id != 1){
+      throw boom.notFound('Product not found')
+    }
     const body = req.body
     res.json({
       message: 'success',

@@ -2,9 +2,14 @@ const express = require('express');
 const productServices = require('../services/servicesProducts');
 const router = express.Router();
 
-router.get('/', async (req, res) => {
-  const products = await productServices.getAllProducts(req, res)
-  res.json(products)
+router.get('/', async (req, res, next) => {
+  try {
+    const products = await productServices.getAllProducts(req, res)
+    res.json(products)
+  } catch (error) {
+    next(error)
+  }
+
 })
 
 router.post('/', async (req, res) => {
