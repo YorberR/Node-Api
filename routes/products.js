@@ -1,56 +1,30 @@
 const express = require('express');
-const faker = require('faker');
+const productServices = require('../services/servicesProducts');
 const router = express.Router();
 
-router.get('/', (req, res) => {
-  const products = []
-  const { size } = req.query
-  const limit = size || 5
-  for (let index = 0; index < limit; index++) {
-    products.push({
-      'id': faker.datatype.uuid(),
-      'name': faker.commerce.productName(),
-      'price': parseInt(faker.commerce.price(), 10),
-      'image': faker.image.imageUrl(),
-    })
-  }
+router.get('/', async (req, res) => {
+  const products = await productServices.getAllProducts(req, res)
   res.json(products)
 })
 
-router.post('/', (req, res) => {
-  const body = req.body
-  res.json({
-    ok:true,
-    data:body
-  })
+router.post('/', async (req, res) => {
+  const newProduct = await productServices.creteNewProduct(req, res)
+  return newProduct
 })
 
-router.patch('/:id', (req, res) => {
-  const {id} = req.params
-  const body = req.body
-  res.json({
-    message: 'success',
-    id,
-    data:body
-  })
+router.patch('/:id', async (req, res) => {
+  const updateProduct = await productServices.updateProduct(req, res)
+  res.json(updateProduct)
 })
 
-router.delete('/:id', (req, res) => {
-  const {id} = req.params
-  res.json({
-    message: 'deleted',
-    id
-  })
+router.delete('/:id', async (req, res) => {
+  const deleteProduct = await productServices.deleteProduct(req, res)
+  return deleteProduct
 })
 
-router.get('/:id', (req, res) => {
-  const {id} = req.parms
-  res.json({
-    'id': id,
-    'name': 'keyboard',
-    'price': 100,
-    'category': 'accessories'
-  });
+router.get('/:id', async (req, res) => {
+  const getOneProduct = await productServices.getOneProduct(req, res)
+  return getOneProduct
 })
 
 module.exports = router;
