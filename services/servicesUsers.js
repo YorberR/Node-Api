@@ -1,22 +1,11 @@
+const  getConnection  = require('../libs/postgres');
 
-
-
-const getAllUsers = (req, res) => {
-  try {
-    const {limit, offset} = req.query
-    if(limit && offset) {
-      res.json({
-        'limit': limit,
-        'offset': offset
-      });
-    } else {
-      res.send('There are no parameters');
-    }
-  } catch (error) {
-    console.log(error)
-  }
-}
+const getAllUsers = async () => {
+  const client = await getConnection()
+  const response = await client.query('SELECT * FROM tasks')
+  return response.rows;
+};
 
 module.exports = {
   getAllUsers
-}
+};
