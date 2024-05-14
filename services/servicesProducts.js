@@ -1,20 +1,11 @@
-const faker = require('faker');
 const boom = require('@hapi/boom');
+const pool = require('../libs/postgres');
 
-const getAllProducts = (req, res) => {
+const getAllProducts = async (req, res) => {
   try {
-    const products = []
-    const { size } = req.query
-    const limit = size || 5
-    for (let index = 0; index < limit; index++) {
-      products.push({
-        'id': faker.datatype.uuid(),
-        'name': faker.commerce.productName(),
-        'price': parseInt(faker.commerce.price(), 10),
-        'image': faker.image.imageUrl(),
-      })
-    }
-    return products
+    const query = 'SELECT * FROM tasks'
+    const response = await pool.query(query)
+    return response.rows
   } catch (error) {
     console.log(error)
   }
