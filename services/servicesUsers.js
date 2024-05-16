@@ -1,9 +1,9 @@
-const  getConnection  = require('../libs/postgres');
+const { models } = require('../libs/sequelize');
+
 
 const getAllUsers = async () => {
-  const client = await getConnection()
-  const response = await client.query('SELECT * FROM tasks')
-  return response.rows;
+  const response = await models.User.findAll();
+  return response;
 };
 
 module.exports = {
