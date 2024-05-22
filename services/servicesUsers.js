@@ -1,3 +1,4 @@
+const {boom} = require('@hapi/boom')
 const { models } = require('../libs/sequelize');
 
 
@@ -6,7 +7,19 @@ const getAllUsers = async () => {
   return response;
 };
 
-const crateUser = async (body) => {
+const findOne = async (id) => {
+  try {
+    const user = await models.User.findByPk(id)
+    if (!user) {
+      throw boom.notFound('User not found')
+    }
+    return user
+  } catch (error) {
+    console.log(error)
+  }
+}
+
+const createUser = async (body) => {
   try {
     const newUser = await models.User.create(body);
     return {
@@ -48,7 +61,8 @@ const deleteUser = async (id) => {
 
 module.exports = {
   getAllUsers,
-  crateUser,
+  createUser,
   UpdateUser,
-  deleteUser
+  deleteUser,
+  findOne
 };
