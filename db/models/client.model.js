@@ -1,7 +1,6 @@
 const { Model, DataTypes, Sequelize } = require('sequelize');
 
 const { USER_TABLE } =  require('./user.model');
-const { allow } = require('joi');
 
 const CLIENT_TABLE = 'clientes';
 
@@ -30,12 +29,23 @@ const ClientSchema = {
     type: DataTypes.DATE,
     field: 'created_at',
     defaultValue: Sequelize.NOW,
+  },
+  userId: {
+    field: 'user_id',
+    allowNull:false,
+    type: DataTypes.INTEGER,
+    references:{
+      model: USER_TABLE,
+      key: 'id'
+    },
+
   }
 }
 
-class Client extends Model {
-  static associate(){
 
+class Client extends Model {
+  static associate(models){
+    this.belongsTo(models.Users, {as:'users'})
   }
 
   static config(sequelize){
