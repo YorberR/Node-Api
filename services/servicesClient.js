@@ -24,17 +24,14 @@ const createClient = async (body) => {
     console.log(body)
     const newClient = await models.Client.create(body)
     console.log(newClient)
-    return {
-      user: newClient,
-      message: 'Client created'
-    }
+    return newClient
   } catch (error) {
     console.log(error)
   }
 }
 
-const updateClient = async (id, body) => {
-  try{
+const updateClients = async (id, body)=>{
+  try {
     const client = await models.Client.findByPk(id)
     if (!client) {
       return {
@@ -48,7 +45,7 @@ const updateClient = async (id, body) => {
   }
 }
 
-const deleteClient = async (id) => {
+const deleteClient = async (id)=>{
   try {
     const client = await models.Client.findOne(id)
     await client.destroy()
@@ -64,7 +61,7 @@ const deleteClient = async (id) => {
 module.exports = {
   getClients,
   createClient,
-  updateClient,
+  updateClients,
   deleteClient,
   findOne
 }

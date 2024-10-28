@@ -39,13 +39,15 @@ const ClientSchema = {
       key: 'id'
     },
 
+    onUpdate: 'CASCADE',
+    onDelete: 'SET NULL'
   }
 }
 
 
 class Client extends Model {
-  static associate(models){
-    this.belongsTo(models.Users, {as:'users'})
+  static associate(models) {
+    this.belongsTo(models.User, {as: 'User', foreignKey:'userId'})
   }
 
   static config(sequelize){
