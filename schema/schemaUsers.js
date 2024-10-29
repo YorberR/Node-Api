@@ -13,7 +13,7 @@ const CreateUserSchema = joi.object({
 
 const updateShemaUser = joi.object({
   email: email,
-  role: role
+  role: role,
 });
 
 const getUserSchema = joi.object({

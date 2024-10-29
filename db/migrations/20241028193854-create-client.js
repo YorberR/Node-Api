@@ -1,7 +1,7 @@
 'use strict';
 
 
-const {ClientSchema, CLIENT_TABLE} = require('../client.model')
+const {ClientSchema, CLIENT_TABLE} = require('../models/client.model')
 
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
