@@ -50,7 +50,7 @@ router.patch('/:id',
   }
 })
 
-router.patch('/:id',
+router.delete('/:id',
   async(req, res, next)=>{
   try {
     const { id } = req.params
