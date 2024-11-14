@@ -11,32 +11,53 @@ router.get('/', async (req, res, next) => {
   } catch (error) {
     next(error)
   }
+})
 
+router.get('/:id', validatorHendler(getProductSchema, 'params'),
+  async (req, res, next) => {
+    try {
+      const {id} = req.params
+      const productOne = await productServices.getOneProduct(id)
+      return res.send(productOne)
+    }
+    catch (error){
+      next(error)
+    }
 })
 
 router.post('/',  validatorHendler(schemaProductCreate, 'body'),
-  async (req, res) => {
-  const newProduct = await productServices.creteNewProduct(req, res)
-  return newProduct
+  async (req, next) => {
+    try {
+      const body = req.body
+      const newProduct = await productServices.creteNewProduct(body)
+      return newProduct
+    } catch (error) {
+      next(error)
+    }
 })
 
 router.patch('/:id',
   validatorHendler(getProductSchema, 'params'),
   validatorHendler(updateShemaProduct, 'body'),
-  async (req, res) => {
-  const updateProduct = await productServices.updateProduct(req, res)
-  res.json(updateProduct)
+  async (req, next) => {
+    try {
+      const {id} = req.params
+      const body = req.body
+      const updateProduct = await productServices.updateProduct(id, body)
+      return updateProduct
+    } catch (error){
+      next(error)
+    }
 })
 
-router.delete('/:id', async (req, res) => {
-  const deleteProduct = await productServices.deleteProduct(req, res)
-  return deleteProduct
-})
-
-router.get('/:id', validatorHendler(getProductSchema, 'params'),
-  async (req, res) => {
-  const getOneProduct = await productServices.getOneProduct(req, res)
-  return getOneProduct
+router.delete('/:id', async (req, res, next) => {
+  try{
+    const {id} = req.params
+    const deleteProduct = await productServices.deleteProduct(id)
+    return res.json(deleteProduct)
+  } catch (error) {
+    next(error)
+  }
 })
 
 module.exports = router;
