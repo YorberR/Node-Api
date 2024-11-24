@@ -2,7 +2,7 @@ const express = require('express');
 const servicesClient = require('../services/servicesClient')
 const router = express.Router()
 const {getClientSchema, createClientSchema,updateClientSchema } = require('../schema/schemaClient')
-const validatorHendler = require('../middleware/validator.hendler')
+const validatorHendler = require('../middleware/validator.handler')
 
 router.get('/', async (req, res, next)=> {
   try {

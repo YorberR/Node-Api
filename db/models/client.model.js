@@ -1,10 +1,10 @@
 const { Model, DataTypes, Sequelize } = require('sequelize');
 
-const { USER_TABLE } =  require('./user.model');
+const { USER_TABLE } = require('./user.model')
 
-const CLIENT_TABLE = 'clientes';
+const CLIENT_TABLE = 'clients';
 
-const ClientSchema = {
+const ClientSchema =  {
   id: {
     allowNull: false,
     autoIncrement: true,
@@ -21,7 +21,7 @@ const ClientSchema = {
     field: 'last_name',
   },
   phone: {
-    allowNull: false,
+    allowNull: true,
     type: DataTypes.STRING,
   },
   createdAt: {
@@ -32,7 +32,7 @@ const ClientSchema = {
   },
   userId: {
     field: 'user_id',
-    allowNull:false,
+    allowNull: false,
     type: DataTypes.INTEGER,
     unique: true,
     references:{

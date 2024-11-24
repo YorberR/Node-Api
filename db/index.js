@@ -3,11 +3,11 @@ const { Client, ClientSchema } = require('./models/client.model');
 const { Category, CategorySchema } = require('./models/category.models');
 const { Product, ProductSchema } = require('./models/product.models');
 
-function setupModels(sequelize) {
-  User.init(UserSchema, User.config(sequelize));
+function  setupModels (sequelize) {
+  User.init(UserSchema, User.config(sequelize))
   Client.init(ClientSchema, Client.config(sequelize))
-  Category.init(CategorySchema, Client.config(sequelize))
-  Product.init(ProductSchema, Client.config(sequelize))
+  Category.init(CategorySchema, Category.config(sequelize))
+  Product.init(ProductSchema, Product.config(sequelize))
 
 
   User.associate(sequelize.models)
@@ -16,4 +16,4 @@ function setupModels(sequelize) {
   Product.associate(sequelize.models)
 }
 
-module.exports = setupModels
+module.exports = setupModels;

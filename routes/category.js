@@ -2,7 +2,7 @@ const express = require('express');
 const servicesCategory = require('../services/servicesCategory')
 const router = express.Router()
 const {createCategory,updateCategory, getCategory} = require('../schema/schemaCategory')
-const validatorHendler = require('../middleware/validator.hendler')
+const validatorHendler = require('../middleware/validator.handler')
 
 router.get('/', async(req, res, next)=>{
   try {
