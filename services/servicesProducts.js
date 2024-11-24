@@ -1,11 +1,13 @@
-const faker = require('faker');
-const boom = require('@hapi/boom')
-const sequelize = require('../libs/sequelize');
+const { models } = require('../libs/sequelize');
 
-const getAllProducts = async (req, res) => {
+
+
+const getAllProducts = async () => {
   try {
-    const query = 'SELECT * FROM tasks'
-    const [data] = await sequelize.query(query)
+
+    const data = await models.Product.findAll({
+      include: ['category']
+    })
     return {
       data
     }
@@ -14,57 +16,53 @@ const getAllProducts = async (req, res) => {
   }
 }
 
-const creteNewProduct = (req, res) => {
+const creteNewProduct = async (body) => {
   try {
-    const body = req.body
-    res.json({
-      ok:true,
-      data:body
-    })
+    const newCategory = await models.Product.create(body)
+    return newCategory
   } catch (error) {
     console.log(error)
   }
 }
 
-const updateProduct = (req, res) => {
+const updateProduct = async (id, body) => {
   try {
-    const {id} = req.params
-    if(id != 1){
-      throw boom.notFound('Product not found')
+    const category = await models.Product.findByPk(id)
+    if (!category){
+      return {
+        error: 'category not found'
+      }
     }
-    const body = req.body
-    res.json({
-      message: 'success',
-      id,
-      data:body
-    })
+    const response = await category.update(body)
+    return response
   } catch (error) {
     console.log(error)
   }
 }
 
-const deleteProduct = (req, res) => {
+const deleteProduct = async (id) => {
   try {
-    const {id} = req.params
-    res.json({
-      message: 'deleted',
+    const category = await models.Product.findOne(id)
+    await category.destroy()
+    return {
+      message: 'category delete',
       id
-    })
+    }
   } catch (error) {
     console.log(error)
   }
 
 }
 
-const getOneProduct = (req, res) => {
+const getOneProduct = async (id) => {
   try {
-    const {id} = req.parms
-    res.json({
-      'id': id,
-      'name': 'keyboard',
-      'price': 100,
-      'category': 'accessories'
-    });
+    const product = await models.Product.findOne(id)
+    if(!product){
+      return {
+        message: 'product not found'
+      }
+    }
+    return product
   } catch (error) {
     console.log(error)
   }
