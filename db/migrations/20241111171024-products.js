@@ -1,6 +1,6 @@
 'use strict';
 
-const {CategorySchema, CATEGORY_TABLE} = require('../models/category.model')
+const {CategorySchema, CATEGORY_TABLE} = require('../models/category.models')
 const {ProductSchema, PRODUCT_TABLE} = require('../models/product.models')
 
 

@@ -17,7 +17,7 @@ const createClientSchema = Joi.object({
   name: name.required(),
   lastName: lastName.required(),
   phone: phone.required(),
-  user: Joi.object({
+  user: Joi .object({
     email:email.require(),
     password:password.require()
   })
