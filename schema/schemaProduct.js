@@ -10,7 +10,7 @@ const categoryId = joi.number().integer()
 const schemaProductCreate = joi.object({
   name: name.required(),
   price: price.required(),
-  details: details.required(),
+  description: details.required(),
   categoryId: categoryId.required()
 
 });
