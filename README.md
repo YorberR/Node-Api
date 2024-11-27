@@ -4,14 +4,15 @@ Node-Api is a personal project that provides a simple API built with Node.js, Ex
 
 ## Project Structure
 
-- **src**: Main source code directory.
-  - **controllers**: Request handlers.
-  - **middleware**: Custom middleware functions.
-  - **models**: Sequelize models.
-  - **routes**: API routes.
-  - **services**: Business logic and database interactions.
-  - **utils**: Utility functions.
-- **tests**: Directory containing test files.
+- **config**: Configuration files. 
+- **db**: Database-related files (models, migrations, seeds). 
+- **libs**: Custom libraries. 
+- **middleware**: Custom middleware functions. 
+- **routes**: API routes. 
+- **schema**: Data validation schemas. 
+- **server**: Server setup and initialization. 
+- **services**: Business logic and database interactions. 
+- **test**: Directory containing test
 
 ## Installation
 
