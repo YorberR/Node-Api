@@ -1,72 +1,74 @@
 const { models } = require('../libs/sequelize');
+const boom = require('@hapi/boom');
 
-
-
-const getAllProducts = async () => {
+const getAllProducts = async (query) => {
   try {
-
+    const { limit = 10, offset = 0 } = query;
     const data = await models.Product.findAll({
-      include: ['category']
+      include: ['category'],
+      limit,
+      offset
     })
     return {
       data
-    }
+    };
   } catch (error) {
-    console.log(error)
+    throw boom.badImplementation('Error al obtener los productos');
   }
-}
+};
 
 const creteNewProduct = async (body) => {
   try {
-    const newCategory = await models.Product.create(body)
-    return newCategory
+    const newProduct = await models.Product.create(body);
+    return newProduct;
   } catch (error) {
-    console.log(error)
+    throw boom.badImplementation('Error al crear el producto');
   }
-}
+};
 
 const updateProduct = async (id, body) => {
   try {
-    const category = await models.Product.findByPk(id)
-    if (!category){
-      return {
-        error: 'category not found'
-      }
+    const product = await models.Product.findByPk(id);
+    if (!product) {
+      throw boom.notFound('Producto no encontrado');
     }
-    const response = await category.update(body)
-    return response
+    const response = await product.update(body);
+    return response;
   } catch (error) {
-    console.log(error)
+    if (error.isBoom) throw error;
+    throw boom.badImplementation('Error al actualizar el producto');
   }
-}
+};
 
 const deleteProduct = async (id) => {
   try {
-    const category = await models.Product.findOne(id)
-    await category.destroy()
-    return {
-      message: 'category delete',
-      id
+    const product = await models.Product.findByPk(id);
+    if (!product) {
+      throw boom.notFound('Producto no encontrado');
     }
+    await product.destroy();
+    return {
+      message: 'Producto eliminado',
+      id
+    };
   } catch (error) {
-    console.log(error)
+    if (error.isBoom) throw error;
+    throw boom.badImplementation('Error al eliminar el producto');
   }
-
-}
+};
 
 const getOneProduct = async (id) => {
   try {
-    const product = await models.Product.findOne(id)
-    if(!product){
-      return {
-        message: 'product not found'
-      }
+    const product = await models.Product.findByPk(id);
+    if (!product) {
+      throw boom.notFound('Producto no encontrado');
     }
-    return product
+    return product;
   } catch (error) {
-    console.log(error)
+    if (error.isBoom) throw error;
+    throw boom.badImplementation('Error al buscar el producto');
   }
-}
+};
 
 module.exports = {
   getAllProducts,
@@ -74,4 +76,4 @@ module.exports = {
   updateProduct,
   deleteProduct,
   getOneProduct
-}
+};

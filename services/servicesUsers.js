@@ -56,8 +56,9 @@ const deleteUser = async (id) => {
       message: 'User deleted',
       id
     }
-  }catch (error) {
-    console.log(error);
+  } catch (error) {
+    console.error(error);
+    throw boom.badImplementation('Error interno del servidor');
   }
 }
 
