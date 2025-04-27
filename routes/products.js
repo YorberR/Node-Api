@@ -3,6 +3,21 @@ const productServices = require('../services/servicesProducts');
 const router = express.Router();
 const { schemaProductCreate, updateShemaProduct, getProductSchema } = require('../schema/schemaProduct');
 const validatorHendler = require('../middleware/validator.handler');
+const NodeCache = require('node-cache');
+
+const cache = new NodeCache({ stdTTL: 300 });
+
+const checkCache = (req, res, next) => {
+  const key = req.originalUrl;
+  const cachedResponse = cache.get(key);
+  
+  if (cachedResponse) {
+    console.log('Respuesta obtenida desde caché');
+    return res.json(cachedResponse);
+  }
+  
+  next();
+};
 
 /**
  * @swagger
@@ -63,14 +78,19 @@ const validatorHendler = require('../middleware/validator.handler');
  *                   items:
  *                     $ref: '#/components/schemas/Product'
  */
-router.get('/', async (req, res, next) => {
+
+router.get('/', checkCache, async (req, res, next) => {
   try {
-    const products = await productServices.getAllProducts(req, res)
-    res.json(products)
+    const limit = req.query.limit ? Math.min(parseInt(req.query.limit), 20) : 20;
+    const products = await productServices.getAllProducts(req.query);
+    
+    cache.set(req.originalUrl, products);
+    
+    res.json(products);
   } catch (error) {
-    next(error)
+    next(error);
   }
-})
+});
 
 /**
  * @swagger
@@ -95,16 +115,19 @@ router.get('/', async (req, res, next) => {
  *       404:
  *         description: Producto no encontrado
  */
-router.get('/:id', validatorHendler(getProductSchema, 'params'), async (req, res, next) => {
+router.get('/:id', checkCache, validatorHendler(getProductSchema, 'params'), async (req, res, next) => {
   try {
-    const {id} = req.params
-    const productOne = await productServices.getOneProduct(id)
-    return res.send(productOne)
+    const {id} = req.params;
+    const productOne = await productServices.getOneProduct(id);
+    
+    cache.set(req.originalUrl, productOne);
+    
+    return res.send(productOne);
   }
   catch (error){
-    next(error)
+    next(error);
   }
-})
+});
 
 /**
  * @swagger
@@ -130,11 +153,14 @@ router.get('/:id', validatorHendler(getProductSchema, 'params'), async (req, res
  */
 router.post('/', validatorHendler(schemaProductCreate, 'body'), async (req, res, next) => {
   try {
-    const body = req.body
-    const newProduct = await productServices.creteNewProduct(body)
-    return res.status(201).json(newProduct)
+    const body = req.body;
+    const newProduct = await productServices.creteNewProduct(body);
+    
+    cache.flushAll();
+    
+    return res.status(201).json(newProduct);
   } catch (error) {
-    next(error)
+    next(error);
   }
 })
 
@@ -181,12 +207,15 @@ router.patch('/:id',
   validatorHendler(updateShemaProduct, 'body'),
   async (req, res, next) => {
     try {
-      const {id} = req.params
-      const body = req.body
-      const updateProduct = await productServices.updateProduct(id, body)
-      return updateProduct
+      const {id} = req.params;
+      const body = req.body;
+      const updateProduct = await productServices.updateProduct(id, body);
+      
+      cache.flushAll();
+      
+      return res.json(updateProduct);
     } catch (error){
-      next(error)
+      next(error);
     }
 })
 
@@ -220,11 +249,14 @@ router.patch('/:id',
  */
 router.delete('/:id', async (req, res, next) => {
   try{
-    const {id} = req.params
-    const deleteProduct = await productServices.deleteProduct(id)
-    return res.json(deleteProduct)
+    const {id} = req.params;
+    const deleteProduct = await productServices.deleteProduct(id);
+    
+    cache.flushAll();
+    
+    return res.json(deleteProduct);
   } catch (error) {
-    next(error)
+    next(error);
   }
 })
 
