@@ -1,27 +1,34 @@
-const { boom } = require('@hapi/boom')
-
+const boom = require('@hapi/boom')
 const { models } = require('../libs/sequelize')
 
 const getClients = async () => {
-  const response = await models.Client.findAll()
-  return response
+  try {
+    const response = await models.Client.findAll({
+      include: ['User']
+    })
+    return response
+  } catch (error) {
+    throw boom.badImplementation('Error getting clients')
+  }
 }
 
 const findOne = async (id) => {
   try {
-    const client = await models.Client.findByPk(id)
+    const client = await models.Client.findByPk(id, {
+      include: ['User']
+    })
     if (!client) {
-      throw boom.notFound('client not found')
+      throw boom.notFound('Client not found')
     }
     return client
   } catch (error) {
-    console.log(error)
+    if (error.isBoom) throw error
+    throw boom.badImplementation('Error searching for client')
   }
 }
 
 const createClient = async (body) => {
   try {
-    console.log(body)
     const newUser = await models.User.create(body.user)
     const newClient = await models.Client.create({
       ...body,
@@ -29,35 +36,38 @@ const createClient = async (body) => {
     })
     return newClient
   } catch (error) {
-    console.log(error)
+    throw boom.badImplementation('Error creating client: ' + error.message)
   }
 }
 
-const updateClients = async (id, body)=>{
+const updateClients = async (id, body) => {
   try {
     const client = await models.Client.findByPk(id)
     if (!client) {
-      return {
-        error: 'client not found'
-      }
+      throw boom.notFound('Client not found')
     }
     const response = await client.update(body)
-    return {response}
+    return response
   } catch (error) {
-    console.log(error)
+    if (error.isBoom) throw error
+    throw boom.badImplementation('Error updating the client')
   }
 }
 
-const deleteClient = async (id)=>{
+const deleteClient = async (id) => {
   try {
-    const client = await models.Client.findOne(id)
+    const client = await models.Client.findByPk(id)
+    if (!client) {
+      throw boom.notFound('Client not found')
+    }
     await client.destroy()
     return {
-      message: 'Client delete',
+      message: 'Deleted customer',
       id
     }
   } catch (error) {
-    console.log(error)
+    if (error.isBoom) throw error
+    throw boom.badImplementation('Error deleting client')
   }
 }
 

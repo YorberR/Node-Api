@@ -5,14 +5,16 @@ const { schemaProductCreate, updateShemaProduct, getProductSchema } = require('.
 const validatorHendler = require('../middleware/validator.handler');
 const NodeCache = require('node-cache');
 
+// Initialize cache with 5 minutes expiration time
 const cache = new NodeCache({ stdTTL: 300 });
 
+// Middleware to check cache
 const checkCache = (req, res, next) => {
   const key = req.originalUrl;
   const cachedResponse = cache.get(key);
   
   if (cachedResponse) {
-    console.log('Respuesta obtenida desde caché');
+    console.log('Response retrieved from cache');
     return res.json(cachedResponse);
   }
   
@@ -38,6 +40,9 @@ const checkCache = (req, res, next) => {
  *         description:
  *           type: string
  *           description: Detailed description of the product
+ *         image:
+ *           type: string
+ *           description: URL to the product image
  *         categoryId:
  *           type: integer
  *           description: ID of the category this product belongs to
@@ -46,6 +51,13 @@ const checkCache = (req, res, next) => {
  *         - price
  *         - description
  *         - categoryId
+ */
+
+/**
+ * @swagger
+ * tags:
+ *   name: Products
+ *   description: Product management endpoints
  */
 
 /**
@@ -59,31 +71,45 @@ const checkCache = (req, res, next) => {
  *         name: limit
  *         schema:
  *           type: integer
- *         description: Maximum number of products to return
+ *         description: Maximum number of products to return (max 20)
  *       - in: query
  *         name: offset
  *         schema:
  *           type: integer
  *         description: Number of products to skip
+ *       - in: query
+ *         name: price
+ *         schema:
+ *           type: number
+ *         description: Filter by price
+ *       - in: query
+ *         name: price_min
+ *         schema:
+ *           type: number
+ *         description: Filter by minimum price
+ *       - in: query
+ *         name: price_max
+ *         schema:
+ *           type: number
+ *         description: Filter by maximum price
  *     responses:
  *       200:
  *         description: List of products
  *         content:
  *           application/json:
  *             schema:
- *               type: object
- *               properties:
- *                 data:
- *                   type: array
- *                   items:
- *                     $ref: '#/components/schemas/Product'
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/Product'
+ *       500:
+ *         $ref: '#/components/responses/InternalServerError'
  */
-
 router.get('/', checkCache, async (req, res, next) => {
   try {
     const limit = req.query.limit ? Math.min(parseInt(req.query.limit), 20) : 20;
     const products = await productServices.getAllProducts(req.query);
     
+    // Save to cache
     cache.set(req.originalUrl, products);
     
     res.json(products);
@@ -96,7 +122,7 @@ router.get('/', checkCache, async (req, res, next) => {
  * @swagger
  * /api/v1/products/{id}:
  *   get:
- *     summary: Obtiene un producto por su ID
+ *     summary: Get a product by ID
  *     tags: [Products]
  *     parameters:
  *       - in: path
@@ -104,79 +130,43 @@ router.get('/', checkCache, async (req, res, next) => {
  *         schema:
  *           type: integer
  *         required: true
- *         description: ID del producto
+ *         description: Product ID
  *     responses:
  *       200:
- *         description: Detalles del producto
+ *         description: Product details
  *         content:
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/Product'
  *       404:
- *         description: Producto no encontrado
+ *         $ref: '#/components/responses/NotFound'
+ *       500:
+ *         $ref: '#/components/responses/InternalServerError'
  */
-router.get('/:id', checkCache, validatorHendler(getProductSchema, 'params'), async (req, res, next) => {
-  try {
-    const {id} = req.params;
-    const productOne = await productServices.getOneProduct(id);
-    
-    cache.set(req.originalUrl, productOne);
-    
-    return res.send(productOne);
-  }
-  catch (error){
-    next(error);
-  }
+router.get('/:id', 
+  checkCache, 
+  validatorHendler(getProductSchema, 'params'), 
+  async (req, res, next) => {
+    try {
+      const {id} = req.params;
+      const productOne = await productServices.getOneProduct(id);
+      
+      // Save to cache
+      cache.set(req.originalUrl, productOne);
+      
+      return res.json(productOne);
+    }
+    catch (error){
+      next(error);
+    }
 });
 
 /**
  * @swagger
  * /api/v1/products:
  *   post:
- *     summary: Crea un nuevo producto
+ *     summary: Create a new product
  *     tags: [Products]
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             $ref: '#/components/schemas/Product'
- *     responses:
- *       201:
- *         description: Producto creado exitosamente
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/Product'
- *       400:
- *         description: Datos inválidos
- */
-router.post('/', validatorHendler(schemaProductCreate, 'body'), async (req, res, next) => {
-  try {
-    const body = req.body;
-    const newProduct = await productServices.creteNewProduct(body);
-    
-    cache.flushAll();
-    
-    return res.status(201).json(newProduct);
-  } catch (error) {
-    next(error);
-  }
-})
-
-/**
- * @swagger
- * /api/v1/products/{id}:
- *   patch:
- *     summary: Actualiza un producto existente
- *     tags: [Products]
- *     parameters:
- *       - in: path
- *         name: id
- *         schema:
- *           type: integer
- *         required: true
- *         description: ID del producto
  *     requestBody:
  *       required: true
  *       content:
@@ -190,17 +180,86 @@ router.post('/', validatorHendler(schemaProductCreate, 'body'), async (req, res,
  *                 type: number
  *               description:
  *                 type: string
+ *               image:
+ *                 type: string
  *               categoryId:
  *                 type: integer
+ *             required:
+ *               - name
+ *               - price
+ *               - description
+ *               - categoryId
  *     responses:
- *       200:
- *         description: Producto actualizado exitosamente
+ *       201:
+ *         description: Product created successfully
  *         content:
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/Product'
+ *       400:
+ *         $ref: '#/components/responses/BadRequest'
+ *       500:
+ *         $ref: '#/components/responses/InternalServerError'
+ */
+router.post('/', 
+  validatorHendler(schemaProductCreate, 'body'), 
+  async (req, res, next) => {
+    try {
+      const body = req.body;
+      const newProduct = await productServices.creteNewProduct(body);
+      
+      // Invalidate cache after creating
+      cache.flushAll();
+      
+      return res.status(201).json(newProduct);
+    } catch (error) {
+      next(error);
+    }
+});
+
+/**
+ * @swagger
+ * /api/v1/products/{id}:
+ *   patch:
+ *     summary: Update a product
+ *     tags: [Products]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *           type: integer
+ *         required: true
+ *         description: Product ID
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               name:
+ *                 type: string
+ *               price:
+ *                 type: number
+ *               description:
+ *                 type: string
+ *               image:
+ *                 type: string
+ *               categoryId:
+ *                 type: integer
+ *     responses:
+ *       200:
+ *         description: Product updated successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Product'
+ *       400:
+ *         $ref: '#/components/responses/BadRequest'
  *       404:
- *         description: Producto no encontrado
+ *         $ref: '#/components/responses/NotFound'
+ *       500:
+ *         $ref: '#/components/responses/InternalServerError'
  */
 router.patch('/:id', 
   validatorHendler(getProductSchema, 'params'),
@@ -211,19 +270,20 @@ router.patch('/:id',
       const body = req.body;
       const updateProduct = await productServices.updateProduct(id, body);
       
+      // Invalidate cache after updating
       cache.flushAll();
       
       return res.json(updateProduct);
     } catch (error){
       next(error);
     }
-})
+});
 
 /**
  * @swagger
  * /api/v1/products/{id}:
  *   delete:
- *     summary: Elimina un producto
+ *     summary: Delete a product
  *     tags: [Products]
  *     parameters:
  *       - in: path
@@ -231,10 +291,10 @@ router.patch('/:id',
  *         schema:
  *           type: integer
  *         required: true
- *         description: ID del producto
+ *         description: Product ID
  *     responses:
  *       200:
- *         description: Producto eliminado exitosamente
+ *         description: Product deleted successfully
  *         content:
  *           application/json:
  *             schema:
@@ -245,19 +305,24 @@ router.patch('/:id',
  *                 id:
  *                   type: integer
  *       404:
- *         description: Producto no encontrado
+ *         $ref: '#/components/responses/NotFound'
+ *       500:
+ *         $ref: '#/components/responses/InternalServerError'
  */
-router.delete('/:id', async (req, res, next) => {
-  try{
-    const {id} = req.params;
-    const deleteProduct = await productServices.deleteProduct(id);
-    
-    cache.flushAll();
-    
-    return res.json(deleteProduct);
-  } catch (error) {
-    next(error);
-  }
-})
+router.delete('/:id', 
+  validatorHendler(getProductSchema, 'params'),
+  async (req, res, next) => {
+    try{
+      const {id} = req.params;
+      const deleteProduct = await productServices.deleteProduct(id);
+      
+      // Invalidate cache after deleting
+      cache.flushAll();
+      
+      return res.json(deleteProduct);
+    } catch (error) {
+      next(error);
+    }
+});
 
 module.exports = router;

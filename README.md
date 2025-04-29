@@ -1,6 +1,6 @@
 # Node-Api
 
-Node-Api is a personal project that provides a simple API built with Node.js, Express, and Sequelize to manage data in a SQLite database. This project includes features like data validation with Joi, error handling with @hapi/boom, and uses various other packages to enhance the development process.
+Node-Api is a personal project that provides a simple API built with Node.js, Express, and Sequelize to manage data in a PostgreSQL database. This project includes features like data validation with Joi, error handling with @hapi/boom, and uses various other packages to enhance the development process.
 
 ## Features
 
@@ -62,7 +62,7 @@ To set up the project locally, follow these steps:
 
 ## Environment Variables
 
-Create a `.env` file in the root directory based on the .env.example file. Here is an example of the content of .`env.example`:
+Create a `.env` file in the root directory based on the `.env.example` file. Here is an example of the content of `.env.example`:
 
 ```
 PORT=3000
@@ -102,6 +102,14 @@ The API includes several measures to prevent abuse:
 The API is deployed on Render.com using their free plan:
 - **Base URL**: https://node-api-6egn.onrender.com
 - **Documentation**: https://node-api-6egn.onrender.com/api-docs
+
+When deploying to Render.com:
+
+1. Configure the environment variables in the Render dashboard:
+   - NODE_ENV=production
+   - PORT=3000
+2. The application automatically initializes the database with test data on startup.
+3. Note that the in-memory database is reset whenever the service restarts, which is ideal for demonstration purposes.
 
 ## License
 

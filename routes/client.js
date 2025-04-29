@@ -156,7 +156,7 @@ router.post('/', validatorHendler(createClientSchema, 'body'),
     try {
       const body = req.body
       const newClient = await servicesClient.createClient(body)
-      return {newClient}
+      res.status(201).json(newClient)
     } catch (error) {
       next(error)
     }
@@ -203,18 +203,18 @@ router.post('/', validatorHendler(createClientSchema, 'body'),
  *       404:
  *         description: Cliente no encontrado
  */
-router.patch('/:id',
-validatorHendler(getClientSchema, 'params'),
-validatorHendler(updateClientSchema, 'body'),
-async(req, res, next)=>{
-  try {
-    const {id} = req.params
-    const body = req.body
-    const updateClient = await servicesClient.updateClients(id, body)
-    return res.json(updateClient)
-  } catch (error) {
-    next(error)
-  }
+router.patch('/:id', 
+  validatorHendler(getClientSchema, 'params'),
+  validatorHendler(updateClientSchema, 'body'),
+  async(req, res, next)=>{
+    try {
+      const {id} = req.params
+      const body = req.body
+      const updateClient = await servicesClient.updateClients(id, body)
+      res.json(updateClient)
+    } catch (error) {
+      next(error)
+    }
 })
 
 
@@ -247,14 +247,16 @@ async(req, res, next)=>{
  *       404:
  *         description: Cliente no encontrado
  */
-router.delete('/:id', async (req, res, next)=>{
-  try {
-    const {id} = req.params
-    const clientDelete = await servicesClient.deleteClient({id})
-    return res.json(clientDelete)
-  } catch (error) {
-    next(error)
-  }
+router.delete('/:id', 
+  validatorHendler(getClientSchema, 'params'),
+  async(req, res, next)=>{
+    try {
+      const {id} = req.params
+      const deleteClient = await servicesClient.deleteClient(id)
+      res.json(deleteClient)
+    } catch (error) {
+      next(error)
+    }
 })
 
 module.exports = router;

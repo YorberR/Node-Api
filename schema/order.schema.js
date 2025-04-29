@@ -1,24 +1,27 @@
 const joi = require('joi');
 
-const id = joi.string().integer();
-const email = joi.string().email();
-const password = joi.string().integer().min(10)
+const id = joi.number().integer();
+const customerId = joi.number().integer();
+const orderId = joi.number().integer();
+const productId = joi.number().integer();
+const amount = joi.number().integer().min(1);
 
-const CreateUserSchema = joi.object({
-  email: email.required(),
-  password: password.required()
-});
-
-const updateShemaUser = joi.object({
-  email: email,
-});
-
-const getUserSchema = joi.object({
+const getOrderSchema = joi.object({
   id: id.required()
-})
+});
+
+const createOrderSchema = joi.object({
+  customerId: customerId.required()
+});
+
+const addItemSchema = joi.object({
+  orderId: orderId.required(),
+  productId: productId.required(),
+  amount: amount.required()
+});
 
 module.exports = {
-  CreateUserSchema,
-  updateShemaUser,
-  getUserSchema
+  getOrderSchema,
+  createOrderSchema,
+  addItemSchema
 }

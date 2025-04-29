@@ -32,27 +32,36 @@ const createCategory = async (body) => {
 
 const updateCategory = async (id, body) => {
   try{
-    const categoryUpdate = await models.Category.findByPk(id, body)
+    const category = await models.Category.findByPk(id)
+    if (!category) {
+      throw new Error('Category not found')
+    }
+    const categoryUpdate = await category.update(body)
     return categoryUpdate
   } catch (error){
     console.log(error)
+    throw error
   }
 }
 
 const deleteCategory = async (id) => {
   try{
-    const categoryDelete = await models.Category.delete(id)
+    const category = await models.Category.findByPk(id)
+    if (!category) {
+      throw new Error('Category not found')
+    }
+    await category.destroy()
     return {
-      categoryDelete,
+      message: 'Deleted category',
       id
     }
   } catch (error){
     console.log(error)
+    throw error
   }
 }
 
-
-models.exports = {
+module.exports = {
   allCategory,
   oneCategory,
   createCategory,

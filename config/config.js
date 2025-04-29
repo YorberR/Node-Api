@@ -11,7 +11,7 @@ const config = {
   dbName: process.env.DB_NAME,
   dbPort: process.env.DB_PORT,
   dbUrl: process.env.DATABASE_URL,
-  sqliteStorage: process.env.SQLITE_STORAGE || './database.sqlite'
+  sqliteStorage: process.env.SQLITE_STORAGE || ':memory:'
 }
 
 module.exports = { config }

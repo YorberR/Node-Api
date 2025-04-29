@@ -1,12 +1,13 @@
-const {boom} = require('@hapi/boom')
+const boom = require('@hapi/boom')
 const { models } = require('../libs/sequelize');
 
-
 const getAllUsers = async () => {
-  const response = await models.User.findAll({
-    include: ['User']
-  });
-  return response;
+  try {
+    const response = await models.User.findAll();
+    return response;
+  } catch (error) {
+    throw boom.badImplementation('Error getting users');
+  }
 };
 
 const findOne = async (id) => {
@@ -17,7 +18,8 @@ const findOne = async (id) => {
     }
     return user
   } catch (error) {
-    console.log(error)
+    if (error.isBoom) throw error
+    throw boom.badImplementation('Error searching for user')
   }
 }
 
@@ -29,7 +31,7 @@ const createUser = async (body) => {
       message: 'User created',
     }
   } catch (error) {
-    console.log(error);
+    throw boom.badImplementation('Error creating user: ' + error.message);
   }
 }
 
@@ -37,28 +39,30 @@ const UpdateUser = async (id, body) => {
   try {
     const user = await models.User.findByPk(id)
     if (!user) {
-      return {
-        error: 'User not found',
-      }
+      throw boom.notFound('User not found')
     }
     const response = await user.update(body)
     return response
-  }catch (error) {
-    console.log(error);
+  } catch (error) {
+    if (error.isBoom) throw error
+    throw boom.badImplementation('Error updating user');
   }
 }
 
 const deleteUser = async (id) => {
   try {
-    const user = await models.User.findOne(id)
+    const user = await models.User.findByPk(id)
+    if (!user) {
+      throw boom.notFound('User not found')
+    }
     await user.destroy()
     return {
-      message: 'User deleted',
+      message: 'Deleted user',
       id
     }
   } catch (error) {
-    console.error(error);
-    throw boom.badImplementation('Error interno del servidor');
+    if (error.isBoom) throw error
+    throw boom.badImplementation('Internal Server Error');
   }
 }
 
