@@ -1,17 +1,23 @@
 const { Sequelize } = require('sequelize');
 const { config } = require('../config/config');
-const setupModels = require('../db/index');
+const setupModels = require('../db/models');
 
+let sequelize;
 
-const USER = encodeURIComponent(config.dbUser);
-const PASSWORD = encodeURIComponent(config.dbPassword);
-const URI = `postgres://${USER}:${PASSWORD}@${config.dbHost}:${config.dbPort}/${config.dbName}`;
+if (config.dbEngine === 'sqlite') {
+  sequelize = new Sequelize({
+    dialect: 'sqlite',
+    storage: config.sqliteStorage,
+    logging: console.log
+  });
+} else {
+  const URI = config.dbUrl || `postgres://${config.dbUser}:${config.dbPassword}@${config.dbHost}:${config.dbPort}/${config.dbName}`;
+  sequelize = new Sequelize(URI, {
+    dialect: 'postgres',
+    logging: console.log
+  });
+}
 
-const sequelize = new Sequelize(URI, {
-  dialect: 'postgres',
-  logging: true
-})
+setupModels(sequelize);
 
-setupModels(sequelize)
-
-module.exports = sequelize
+module.exports = sequelize;

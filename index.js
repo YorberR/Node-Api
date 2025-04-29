@@ -20,7 +20,10 @@ const swaggerOptions = {
     },
     servers: [
       {
-        url: 'http://localhost:3000'
+        url: process.env.NODE_ENV === 'production' 
+          ? 'https://node-api-6egn.onrender.com' 
+          : 'http://localhost:3000',
+        description: process.env.NODE_ENV === 'production' ? 'Production Server' : 'Development Server'
       }
     ]
   },
@@ -33,7 +36,9 @@ const compression = require('compression');
 const helmet = require('helmet');
 
 app.use(cors({
-  origin: '*'
+  origin: '*',
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
+  allowedHeaders: ['Content-Type', 'Authorization']
 }));
 app.use(express.json({ limit: '10kb' }));
 app.use(express.urlencoded({ extended: true, limit: '10kb' }));

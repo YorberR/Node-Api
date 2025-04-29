@@ -1,6 +1,6 @@
 # Node-Api
 
-Node-Api is a personal project that provides a simple API built with Node.js, Express, and Sequelize to manage data in a PostgreSQL database. This project includes features like data validation with Joi, error handling with @hapi/boom, and uses various other packages to enhance the development process.
+Node-Api is a personal project that provides a simple API built with Node.js, Express, and Sequelize to manage data in a SQLite database. This project includes features like data validation with Joi, error handling with @hapi/boom, and uses various other packages to enhance the development process.
 
 ## Features
 
@@ -12,6 +12,7 @@ Node-Api is a personal project that provides a simple API built with Node.js, Ex
 - **Security**: Implementation of helmet for HTTP header protection.
 - **Compression**: Compressed responses for better performance.
 - **Usage Monitoring**: Tracking of API usage.
+- **SQLite Database**: Lightweight, file-based database for easy deployment.
 
 ## Project Structure
 
@@ -23,7 +24,7 @@ Node-Api is a personal project that provides a simple API built with Node.js, Ex
 - **schema**: Data validation schemas. 
 - **server**: Server setup and initialization. 
 - **services**: Business logic and database interactions. 
-- **test**: Directory containing test
+- **test**: Directory containing tests.
 - **logs**: Usage and error logs.
 
 ## Installation
