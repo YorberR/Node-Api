@@ -28,14 +28,13 @@ const ProductSchema = {
     defaultValue: Sequelize.NOW
   },
   categoryId: {
-    field: 'categry_id',
-    allowNull:false,
+    field: 'category_id', 
+    allowNull: false,
     type: DataTypes.INTEGER,
-    references:{
+    references: {
       model: CATEGORY_TABLE,
       key: 'id'
     },
-
     onUpdate: 'CASCADE',
     onDelete: 'SET NULL'
   }
@@ -49,9 +48,9 @@ class Product extends Model{
   static config(sequelize){
     return{
       sequelize,
-      tableName: 'PRODUCT_TABLE',
+      tableName: PRODUCT_TABLE, 
       modelName: 'Product',
-      timesTamps: false
+      timestamps: false
     }
   }
 }
