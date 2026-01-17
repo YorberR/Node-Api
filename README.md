@@ -1,70 +1,84 @@
-# Node-Api
+# 🛡️ Node.js Enterprise-Ready REST API
 
-Node-Api is a personal project that provides a simple API built with Node.js, Express, and Sequelize to manage data in a PostgreSQL database. This project includes features like data validation with Joi, error handling with @hapi/boom, and uses various other packages to enhance the development process.
+![NodeJS](https://img.shields.io/badge/Node.js-18%2B-339933?style=for-the-badge&logo=nodedotjs&logoColor=white)
+![Express](https://img.shields.io/badge/Express.js-000000?style=for-the-badge&logo=express&logoColor=white)
+![Sequelize](https://img.shields.io/badge/Sequelize-52B0E7?style=for-the-badge&logo=sequelize&logoColor=white)
+![Docker](https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white)
+![Swagger](https://img.shields.io/badge/Swagger-85EA2D?style=for-the-badge&logo=swagger&logoColor=black)
 
-## Features
+A robust and secure RESTful API built with **Node.js**, **Express**, and **Sequelize**. This project goes beyond basic CRUD operations by implementing industry standards for security, performance optimization, and architectural scalability.
 
-- **Data Validation**: Implemented with Joi to ensure data integrity.
-- **Error Handling**: Using @hapi/boom for consistent error responses.
-- **API Documentation**: Swagger UI for interactive API documentation.
-- **Rate Limiting**: Protection against abuse with express-rate-limit.
-- **Caching**: Performance enhancement with node-cache.
-- **Security**: Implementation of helmet for HTTP header protection.
-- **Compression**: Compressed responses for better performance.
-- **Usage Monitoring**: Tracking of API usage.
-- **SQLite Database**: Lightweight, file-based database for easy deployment.
+### 🚀 [Explore the Live Documentation (Swagger UI)](https://node-api-6egn.onrender.com/api-docs/)
 
-## Project Structure
+---
 
-- **config**: Configuration files. 
-- **db**: Database-related files (models, migrations, seeds). 
-- **libs**: Custom libraries. 
-- **middleware**: Custom middleware functions. 
-- **routes**: API routes. 
-- **schema**: Data validation schemas. 
-- **server**: Server setup and initialization. 
-- **services**: Business logic and database interactions. 
-- **test**: Directory containing tests.
-- **logs**: Usage and error logs.
+## ⚡ Key Features
 
-## Installation
+This API is engineered with production-grade best practices:
 
-To set up the project locally, follow these steps:
+### 🛡️ Security & Integrity
+* **Data Validation:** Strict input validation using **Joi** schemas to prevent bad data injection.
+* **Protection Headers:** Implemented **Helmet** to secure HTTP headers against common vulnerabilities.
+* **Rate Limiting:** Protects against DDoS and brute-force attacks using `express-rate-limit`.
+* **CORS:** Configured to allow secure cross-origin requests.
 
-1. **Clone the repository:**
-   ```bash
-   git clone https://github.com/YorberR/Node-Api.git
-   cd Node-Api
+### 🚀 Performance
+* **Caching:** Implements **node-cache** to reduce database load and speed up response times for frequent requests.
+* **Compression:** Uses Gzip compression to minimize payload size and bandwidth usage.
+* **Pagination:** Efficient data retrieval for large datasets.
 
+### 🏗️ Architecture
+* **ORM:** Uses **Sequelize** for database abstraction (supports PostgreSQL, MySQL, SQLite).
+* **Error Handling:** Centralized error management using **@hapi/boom** for consistent HTTP status codes.
+* **Containerization:** Fully Dockerized for consistent development and deployment environments.
 
-2. **Install dependencies:**
+---
 
-    ```bash
-    npm install
+## 🛠️ Tech Stack
 
-## Using npm Commands
+* **Core:** Node.js, Express.js
+* **Database:** Sequelize ORM (configured with SQLite for this demo, compatible with PostgreSQL).
+* **Validation:** Joi
+* **Docs:** Swagger UI / OpenAPI
+* **DevOps:** Docker, Docker Compose
+* **Testing:** Mocha (Setup included)
 
-- `npm run dev`: Start the server in development mode using nodemon.
+---
 
-- `npm start`: Start the server in production mode.
+## 📂 Project Structure
 
-- `npm run lint`: Run ESLint to check code syntax.
-
-- `npm test`: Run tests using Mocha.
-
-- `npm run migrations:generate`: Generate a new migration using Sequelize CLI.
-
-- `npm run migrations:run`: Run all pending migrations.
-
-- `npm run migrations:revert`: Revert the last executed migration.
-
-- `npm run migrations:delete`: Revert all migrations.
-
-## Environment Variables
-
-Create a `.env` file in the root directory based on the `.env.example` file. Here is an example of the content of `.env.example`:
-
+```text
+├── src
+│   ├── config/       # Environment & Database config
+│   ├── db/           # Models, Migrations, Seeds
+│   ├── libs/         # Sequelize & external clients
+│   ├── middlewares/  # Error handler, Validation, Auth
+│   ├── routes/       # API Routes definitions
+│   ├── services/     # Business Logic (Service Layer)
+│   ├── schemas/      # Joi Validation Schemas
+│   └── index.js      # App Entry point
 ```
+
+---
+
+## 💻 Installation & Local Run
+**Option A: Standard NPM**
+1. Clone the repository:
+
+```bash
+git clone [https://github.com/YorberR/Node-Api.git](https://github.com/YorberR/Node-Api.git)
+cd Node-Api
+```
+
+2. Install dependencies:
+
+```bash
+npm install
+```
+
+3. Environment Setup: Create a .env file based on .env.example:
+
+```bash
 PORT=3000
 DB_USER='user'
 DB_PASSWORD='password'
@@ -73,48 +87,42 @@ DB_NAME='my_api'
 DB_PORT='5432'
 ```
 
-## Docker Configuration
+4. Run Development Server:
 
-- Ensure you have Docker and Docker Compose installed on your system.
+```bash
+npm run dev
+```
 
-- Start the Docker containers:
+**Option B: Docker (Recommended)**
+Run the application in a containerized environment instantly:
 
-    ```bash
-    docker-compose up -d
+```bash
+docker compose up -d
+```
 
-## API Documentation
+---
 
-Interactive API documentation is available through Swagger UI:
-- **Local Development**: http://localhost:3000/api-docs
-- **Deployed Version**: https://node-api-6egn.onrender.com/api-docs
+## ⚠️ API Protections (Demo Configuration)
+To ensure fair usage of this demo, the following limits are active:
 
-## Limitations and Protections
+* **Rate Limit:** Max 100 requests per IP per 15 mins.
 
-The API includes several measures to prevent abuse:
-- **Rate Limiting**: 100 requests per IP every 15 minutes.
-- **Creation Limiting**: 10 POST requests per hour.
-- **Timeout**: Requests are canceled after 5 seconds.
-- **Payload Size**: Limited to 10KB for JSON requests.
-- **Caching**: Responses are cached for 5 minutes to improve performance.
+* **Creation Limit:** Max 10 POST requests per hour.
 
-## Deployment
+* **Timeout:** Requests aborted after 5 seconds.
 
-The API is deployed on Render.com using their free plan:
-- **Base URL**: https://node-api-6egn.onrender.com
-- **Documentation**: https://node-api-6egn.onrender.com/api-docs
+* **Payload:** Max 10KB JSON body size.
 
-When deploying to Render.com:
+* **Cache TTL:** Responses cached for 5 minutes.
 
-1. Configure the environment variables in the Render dashboard:
-   - NODE_ENV=production
-   - PORT=3000
-2. The application automatically initializes the database with test data on startup.
-3. Note that the in-memory database is reset whenever the service restarts, which is ideal for demonstration purposes.
+---
 
-## License
+## ☁️ Deployment
+The API is deployed on **Render** (Free Tier).
 
-This project is licensed under the MIT License. See the LICENSE file for more details.
+**Note:** The application uses an in-memory/file-based database for the demo. Data resets on every deployment or cold start.
 
-## How to Contribute
+---
 
-Contributions are welcome. Please open an issue or submit a pull request to discuss any changes you would like to make.
+## 📄 License
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
