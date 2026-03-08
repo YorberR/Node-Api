@@ -64,6 +64,9 @@
     "js-beautify": "^1.15.0",
     "editorconfig": "^1.0.4",
     "debug": "^3.2.7",
-    "js-yaml": "^3.14.2"
+    "js-yaml": "^3.14.2",
+    "@tootallnate/once": "^2.0.0",
+    "http-proxy-agent": "^5.0.0",
+    "socks-proxy-agent": "^8.0.5"
   }
 }

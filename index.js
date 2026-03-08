@@ -119,11 +119,15 @@ const limiter = rateLimit({
 app.use(limiter);
 
 // CORS configuration
-app.use(cors({
-  origin: '*',
+const corsOptions = {
+  origin: process.env.NODE_ENV === 'production' 
+    ? process.env.ALLOWED_ORIGINS?.split(',') || 'https://node-api-6egn.onrender.com'
+    : ['http://localhost:3000', 'http://localhost:5173'],
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
-  allowedHeaders: ['Content-Type', 'Authorization']
-}));
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true
+};
+app.use(cors(corsOptions));
 
 // Body parsers
 app.use(express.json({ limit: '10kb' }));
@@ -188,10 +192,15 @@ if (!fs.existsSync(logDir)) {
 // Database initialization
 const initDatabase = async () => {
   try {
-    await sequelize.sync({ force: true });
-    console.log('Database initialized successfully');
-    await seedDatabase();
-    console.log('Test data created successfully');
+    if (process.env.NODE_ENV === 'development') {
+      await sequelize.sync({ force: true });
+      console.log('Database initialized successfully (dev mode)');
+      await seedDatabase();
+      console.log('Test data created successfully');
+    } else if (process.env.NODE_ENV === 'production') {
+      await sequelize.sync({ alter: false });
+      console.log('Database synced successfully (production mode)');
+    }
   } catch (error) {
     console.error('Error initializing database:', error);
   }

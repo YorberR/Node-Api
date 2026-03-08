@@ -118,7 +118,7 @@ router.post('/', validatorHendler(CreateUserSchema, 'body'), async (req, res, ne
   try {
     const body = req.body
     const newUser = await usersServices.createUser(body)
-    return newUser
+    return res.status(201).json(newUser)
   } catch (error) {
     next(error)
   }
