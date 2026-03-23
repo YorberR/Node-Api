@@ -1,5 +1,6 @@
 const boom = require('@hapi/boom')
 const { models } = require('../libs/sequelize');
+const bcrypt = require('bcrypt');
 
 const getAllUsers = async () => {
   try {
@@ -25,11 +26,13 @@ const findOne = async (id) => {
 
 const createUser = async (body) => {
   try {
-    const newUser = await models.User.create(body);
+    const hash = await bcrypt.hash(body.password, 10);
+    const newUser = await models.User.create({ ...body, password: hash });
+    delete newUser.dataValues.password;
     return {
       user: newUser,
       message: 'User created',
-    }
+    };
   } catch (error) {
     throw boom.badImplementation('Error creating user: ' + error.message);
   }

@@ -1,24 +1,26 @@
 const { config } = require('../config/config');
 
-const USER = encodeURIComponent(config.dbUser);
-const PASSWORD = encodeURIComponent(config.dbPassword);
-const URI = `postgres://${USER}:${PASSWORD}@${config.dbHost}:${config.dbPort}/${config.dbName}`;
-
+const buildUrl = () => {
+  if (config.dbUrl) return config.dbUrl;
+  
+  const user = encodeURIComponent(config.dbUser || 'postgres');
+  const password = encodeURIComponent(config.dbPassword || 'postgres');
+  const host = config.dbHost || 'localhost';
+  const port = config.dbPort || 5432;
+  const db = config.dbName || 'my_api';
+  
+  return `postgres://${user}:${password}@${host}:${port}/${db}`;
+};
 
 module.exports = {
   development: {
-    username: 'postgres',
-    password: 'postgres',
-    database: 'my_api',
-    url: URI,
-    dialect: 'postgres'
+    url: buildUrl(),
+    dialect: 'postgres',
+    logging: false
   },
-
   production: {
-    username: 'postgres',
-    password: 'postgres',
-    database: 'my_api',
-    url: URI,
-    dialect: 'postgres'
+    url: buildUrl(),
+    dialect: 'postgres',
+    logging: false
   }
-}
+};

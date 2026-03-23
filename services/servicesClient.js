@@ -1,5 +1,7 @@
 const boom = require('@hapi/boom')
 const { models } = require('../libs/sequelize')
+const bcrypt = require('bcrypt');
+const { de } = require('faker/lib/locales');
 
 const getClients = async () => {
   try {
@@ -29,11 +31,13 @@ const findOne = async (id) => {
 
 const createClient = async (body) => {
   try {
-    const newUser = await models.User.create(body.user)
+    const hash = await bcrypt.hash(body.user.password, 10);
+    const newUser = await models.User.create({ ...body.user, password: hash });
     const newClient = await models.Client.create({
       ...body,
       userId: newUser.id
     })
+    delete newUser.dataValues.password;
     return newClient
   } catch (error) {
     throw boom.badImplementation('Error creating client: ' + error.message)
