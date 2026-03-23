@@ -1,7 +1,6 @@
 const boom = require('@hapi/boom')
 const { models } = require('../libs/sequelize')
 const bcrypt = require('bcrypt');
-const { de } = require('faker/lib/locales');
 
 const getClients = async () => {
   try {

@@ -11,6 +11,7 @@ const rateLimit = require('express-rate-limit');
 const usageMonitor = require('./middleware/usage-monitor');
 const sequelize = require('./libs/sequelize');
 const seedDatabase = require('./db/seeds/seedDatabase');
+const passport = require('passport');
 
 const swaggerOptions = {
   definition: {
@@ -128,6 +129,9 @@ const corsOptions = {
   credentials: true
 };
 app.use(cors(corsOptions));
+
+require('./utils/auth');
+app.use(passport.initialize());
 
 // Body parsers
 app.use(express.json({ limit: '10kb' }));
