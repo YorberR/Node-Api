@@ -3,6 +3,7 @@ const servicesClient = require('../services/servicesClient')
 const router = express.Router()
 const {getClientSchema, createClientSchema,updateClientSchema } = require('../schema/schemaClient')
 const validatorHendler = require('../middleware/validator.handler')
+const { verifyToken } = require('../middleware/auth.handler');
 
 /**
  * @swagger
@@ -112,6 +113,8 @@ router.get('/:id', validatorHendler(getClientSchema, 'params'),
  *   post:
  *     summary: Crea un nuevo cliente
  *     tags: [Clients]
+ *     security:
+ *       - bearerAuth: []
  *     requestBody:
  *       required: true
  *       content:
@@ -148,10 +151,10 @@ router.get('/:id', validatorHendler(getClientSchema, 'params'),
  *               properties:
  *                 newClient:
  *                   $ref: '#/components/schemas/Client'
- *       400:
- *         description: Datos inválidos
+ *       401:
+ *         description: Unauthorized
  */
-router.post('/', validatorHendler(createClientSchema, 'body'),
+router.post('/', verifyToken, validatorHendler(createClientSchema, 'body'),
   async(req, res, next)=>{
     try {
       const body = req.body
@@ -168,6 +171,8 @@ router.post('/', validatorHendler(createClientSchema, 'body'),
  *   patch:
  *     summary: Actualiza un cliente existente
  *     tags: [Clients]
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
@@ -203,7 +208,7 @@ router.post('/', validatorHendler(createClientSchema, 'body'),
  *       404:
  *         description: Cliente no encontrado
  */
-router.patch('/:id', 
+router.patch('/:id', verifyToken,
   validatorHendler(getClientSchema, 'params'),
   validatorHendler(updateClientSchema, 'body'),
   async(req, res, next)=>{
@@ -225,6 +230,8 @@ router.patch('/:id',
  *   delete:
  *     summary: Elimina un cliente
  *     tags: [Clients]
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
@@ -247,7 +254,7 @@ router.patch('/:id',
  *       404:
  *         description: Cliente no encontrado
  */
-router.delete('/:id', 
+router.delete('/:id', verifyToken, 
   validatorHendler(getClientSchema, 'params'),
   async(req, res, next)=>{
     try {

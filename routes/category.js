@@ -3,6 +3,7 @@ const servicesCategory = require('../services/servicesCategory')
 const router = express.Router()
 const {createCategory,updateCategory, getCategory} = require('../schema/schemaCategory')
 const validatorHendler = require('../middleware/validator.handler')
+const { verifyToken } = require('../middleware/auth.handler');
 
 /**
  * @swagger
@@ -89,6 +90,8 @@ router.get('/:id', async (req, res, next) => {
  *   post:
  *     summary: Create a new category
  *     tags: [Categories]
+ *     security:
+ *       - bearerAuth: []
  *     requestBody:
  *       required: true
  *       content:
@@ -105,7 +108,7 @@ router.get('/:id', async (req, res, next) => {
  *       400:
  *         description: Invalid data
  */
-router.post('/', validatorHendler(createCategory, 'body'),
+router.post('/', verifyToken, validatorHendler(createCategory, 'body'),
   async(req, res, next)=>{
   try {
     const body = req.body
@@ -122,6 +125,8 @@ router.post('/', validatorHendler(createCategory, 'body'),
  *   patch:
  *     summary: Update an existing category
  *     tags: [Categories]
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
@@ -150,7 +155,7 @@ router.post('/', validatorHendler(createCategory, 'body'),
  *       404:
  *         description: Category not found
  */
-router.patch('/:id',
+router.patch('/:id', verifyToken,
   validatorHendler(getCategory, 'params'),
   validatorHendler(updateCategory, 'body'),
   async(req, res, next)=>{
@@ -170,6 +175,8 @@ router.patch('/:id',
  *   delete:
  *     summary: Delete a category
  *     tags: [Categories]
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
@@ -192,7 +199,7 @@ router.patch('/:id',
  *       404:
  *         description: Category not found
  */
-router.delete('/:id',
+router.delete('/:id', verifyToken,
   async(req, res, next)=>{
   try {
     const { id } = req.params

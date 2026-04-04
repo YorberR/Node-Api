@@ -10,4 +10,18 @@ function checkApiKey(req, res, next) {
     }
 }
 
-module.exports = {checkApiKey};
+function verifyToken(req, res, next) {
+    const passport = require('passport');
+    passport.authenticate('jwt', { session: false }, (err, user, info) => {
+        if (err) {
+            return next(boom.unauthorized(err.message));
+        }
+        if (!user) {
+            return next(boom.unauthorized('Invalid or expired token'));
+        }
+        req.user = user;
+        next();
+    })(req, res, next);
+}
+
+module.exports = {checkApiKey, verifyToken};

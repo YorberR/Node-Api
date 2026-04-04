@@ -3,6 +3,7 @@ const productServices = require('../services/servicesProducts');
 const router = express.Router();
 const { schemaProductCreate, updateShemaProduct, getProductSchema } = require('../schema/schemaProduct');
 const validatorHendler = require('../middleware/validator.handler');
+const { verifyToken } = require('../middleware/auth.handler');
 const NodeCache = require('node-cache');
 
 // Initialize cache with 5 minutes expiration time
@@ -196,12 +197,10 @@ router.get('/:id',
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/Product'
- *       400:
- *         $ref: '#/components/responses/BadRequest'
- *       500:
- *         $ref: '#/components/responses/InternalServerError'
+ *       401:
+ *         description: Unauthorized
  */
-router.post('/', 
+router.post('/', verifyToken, 
   validatorHendler(schemaProductCreate, 'body'), 
   async (req, res, next) => {
     try {
@@ -254,14 +253,12 @@ router.post('/',
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/Product'
- *       400:
- *         $ref: '#/components/responses/BadRequest'
+ *       401:
+ *         description: Unauthorized
  *       404:
- *         $ref: '#/components/responses/NotFound'
- *       500:
- *         $ref: '#/components/responses/InternalServerError'
+ *         description: Not Found
  */
-router.patch('/:id', 
+router.patch('/:id', verifyToken, 
   validatorHendler(getProductSchema, 'params'),
   validatorHendler(updateShemaProduct, 'body'),
   async (req, res, next) => {
@@ -295,22 +292,12 @@ router.patch('/:id',
  *     responses:
  *       200:
  *         description: Product deleted successfully
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                 id:
- *                   type: integer
+ *       401:
+ *         description: Unauthorized
  *       404:
- *         $ref: '#/components/responses/NotFound'
- *       500:
- *         $ref: '#/components/responses/InternalServerError'
+ *         description: Not Found
  */
-router.delete('/:id', 
-  validatorHendler(getProductSchema, 'params'),
+router.delete('/:id', verifyToken,
   async (req, res, next) => {
     try{
       const {id} = req.params;

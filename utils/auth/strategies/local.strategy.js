@@ -1,23 +1,24 @@
 const { Strategy } = require('passport-local');
-const servicesUsers = require('../../../services/servicesUsers');
+const { models } = require('../../../libs/sequelize');
 const boom = require('@hapi/boom');
 const bcrypt = require('bcrypt');
-
-const service = new servicesUsers();
+const { removePassword } = require('../../../services/servicesUsers');
 
 const LocalStrategy = new Strategy({ usernameField: 'email' }, async (email, password, done) => {
     try {
-        const user = await service.findByEmail(email);
+        const user = await models.User.findOne({ where: { email } });
         if (!user) {
             done(boom.unauthorized(), false);
+            return;
         }
         const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) {
             done(boom.unauthorized(), false);
+            return;
         }
-        done(null, user);
+        done(null, removePassword(user));
     } catch (error) {
-        done(error, false)
+        done(error, false);
     }
 });
 

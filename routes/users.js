@@ -3,10 +3,16 @@ const usersServices = require('../services/servicesUsers');
 const router = express.Router();
 const { CreateUserSchema, updateShemaUser, getUserSchema } = require('../schema/schemaUsers');
 const validatorHendler = require('../middleware/validator.handler');
+const { verifyToken } = require('../middleware/auth.handler');
 
 /**
  * @swagger
  * components:
+ *   securitySchemes:
+ *     bearerAuth:
+ *       type: http
+ *       scheme: bearer
+ *       bearerFormat: JWT
  *   schemas:
  *     User:
  *       type: object
@@ -18,15 +24,12 @@ const validatorHendler = require('../middleware/validator.handler');
  *           type: string
  *           format: email
  *           description: User's email address
- *         password:
- *           type: string
- *           description: User's password
  *         role:
  *           type: string
  *           description: User's role
  *       required:
  *         - email
- *         - password
+ *         - role
  */
 
 /**
@@ -93,28 +96,31 @@ router.get('/:id', validatorHendler(getUserSchema, 'params'), async (req, res, n
  *   post:
  *     summary: Crea un nuevo usuario
  *     tags: [Users]
+ *     security:
+ *       - bearerAuth: []
  *     requestBody:
  *       required: true
  *       content:
  *         application/json:
  *           schema:
- *             $ref: '#/components/schemas/User'
+ *             type: object
+ *             properties:
+ *               email:
+ *                 type: string
+ *               password:
+ *                 type: string
+ *               role:
+ *                 type: string
+ *             required:
+ *               - email
+ *               - password
  *     responses:
  *       201:
  *         description: Usuario creado exitosamente
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 user:
- *                   $ref: '#/components/schemas/User'
- *                 message:
- *                   type: string
- *       400:
- *         description: Datos inválidos
+ *       401:
+ *         description: Unauthorized
  */
-router.post('/', validatorHendler(CreateUserSchema, 'body'), async (req, res, next) => {
+router.post('/', verifyToken, validatorHendler(CreateUserSchema, 'body'), async (req, res, next) => {
   try {
     const body = req.body
     const newUser = await usersServices.createUser(body)
@@ -130,6 +136,8 @@ router.post('/', validatorHendler(CreateUserSchema, 'body'), async (req, res, ne
  *   patch:
  *     summary: Actualiza un usuario existente
  *     tags: [Users]
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
@@ -152,14 +160,12 @@ router.post('/', validatorHendler(CreateUserSchema, 'body'), async (req, res, ne
  *     responses:
  *       200:
  *         description: Usuario actualizado exitosamente
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/User'
+ *       401:
+ *         description: Unauthorized
  *       404:
  *         description: Usuario no encontrado
  */
-router.patch('/:id', 
+router.patch('/:id', verifyToken,
   validatorHendler(getUserSchema, 'params'),
   validatorHendler(updateShemaUser, 'body'),
   async (req, res, next) => {
@@ -179,6 +185,8 @@ router.patch('/:id',
  *   delete:
  *     summary: Elimina un usuario
  *     tags: [Users]
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
@@ -189,19 +197,12 @@ router.patch('/:id',
  *     responses:
  *       200:
  *         description: Usuario eliminado exitosamente
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                 id:
- *                   type: integer
+ *       401:
+ *         description: Unauthorized
  *       404:
  *         description: Usuario no encontrado
  */
-router.delete('/:id', async (req, res, next) => {
+router.delete('/:id', verifyToken, async (req, res, next) => {
   try {
     const {id} = req.params
     const userDelete = await usersServices.deleteUser(id)

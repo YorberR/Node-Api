@@ -7,7 +7,8 @@ async function seedDatabase() {
     // Crear usuarios
     const users = await models.User.bulkCreate([
       { email: 'admin@example.com', password: 'admin123', role: 'admin' },
-      { email: 'customer@example.com', password: 'customer123', role: 'customer' }
+      { email: 'customer@example.com', password: 'customer123', role: 'customer' },
+      { email: 'demo@test.com', password: 'demo123', role: 'customer' }
     ]);
     console.log('Usuarios creados correctamente');
 

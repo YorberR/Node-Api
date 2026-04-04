@@ -19,7 +19,37 @@ const swaggerOptions = {
     info: {
       title: 'Node API',
       version: '1.0.0',
-      description: 'API Documentation for Node-API project'
+      description: `
+## 🔐 Authentication Guide
+
+### Want to test protected routes?
+
+1. **Go to endpoint** \`/api/v1/auth/demo-login\` and execute it to get an Access Token instantly.
+
+2. **Copy the token** from the response.
+
+3. **Click the green "Authorize" button** at the top of this page.
+
+4. **Paste the token** in the format: \`Bearer <your_token>\`
+
+---
+
+### 📝 Endpoints:
+
+| Method | Endpoint | Auth Required |
+|--------|----------|---------------|
+| GET | /api/v1/users | No |
+| POST | /api/v1/users | ✅ Yes |
+| PATCH | /api/v1/users/:id | ✅ Yes |
+| DELETE | /api/v1/users/:id | ✅ Yes |
+| GET | /api/v1/products | No |
+| POST | /api/v1/products | ✅ Yes |
+| PATCH | /api/v1/products/:id | ✅ Yes |
+| DELETE | /api/v1/products/:id | ✅ Yes |
+
+---
+**Demo User:** demo@test.com (password: demo123)
+      `
     },
     servers: [
       {

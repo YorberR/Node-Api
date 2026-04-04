@@ -5,7 +5,10 @@ const bcrypt = require('bcrypt');
 const getClients = async () => {
   try {
     const response = await models.Client.findAll({
-      include: ['User']
+      include: [{
+        association: 'User',
+        attributes: { exclude: ['password'] }
+      }]
     })
     return response
   } catch (error) {
@@ -16,7 +19,10 @@ const getClients = async () => {
 const findOne = async (id) => {
   try {
     const client = await models.Client.findByPk(id, {
-      include: ['User']
+      include: [{
+        association: 'User',
+        attributes: { exclude: ['password'] }
+      }]
     })
     if (!client) {
       throw boom.notFound('Client not found')
