@@ -105,15 +105,11 @@ const checkCache = (req, res, next) => {
  *       500:
  *         $ref: '#/components/responses/InternalServerError'
  */
-router.get('/', checkCache, async (req, res, next) => {
+router.get('/', async (req, res, next) => {
   try {
     const limit = req.query.limit ? Math.min(parseInt(req.query.limit), 20) : 20;
     const products = await productServices.getAllProducts(req.query);
-    
-    // Save to cache
-    cache.set(req.originalUrl, products);
-    
-    res.json(products);
+    res.send(products);
   } catch (error) {
     next(error);
   }
@@ -145,17 +141,12 @@ router.get('/', checkCache, async (req, res, next) => {
  *         $ref: '#/components/responses/InternalServerError'
  */
 router.get('/:id', 
-  checkCache, 
   validatorHendler(getProductSchema, 'params'), 
   async (req, res, next) => {
     try {
       const {id} = req.params;
       const productOne = await productServices.getOneProduct(id);
-      
-      // Save to cache
-      cache.set(req.originalUrl, productOne);
-      
-      return res.json(productOne);
+      return res.send(productOne);
     }
     catch (error){
       next(error);
@@ -168,6 +159,8 @@ router.get('/:id',
  *   post:
  *     summary: Create a new product
  *     tags: [Products]
+ *     security:
+ *       - bearerAuth: []
  *     requestBody:
  *       required: true
  *       content:
@@ -222,6 +215,8 @@ router.post('/', verifyToken,
  *   patch:
  *     summary: Update a product
  *     tags: [Products]
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
@@ -282,6 +277,8 @@ router.patch('/:id', verifyToken,
  *   delete:
  *     summary: Delete a product
  *     tags: [Products]
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id

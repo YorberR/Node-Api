@@ -8,11 +8,6 @@ const { verifyToken } = require('../middleware/auth.handler');
 /**
  * @swagger
  * components:
- *   securitySchemes:
- *     bearerAuth:
- *       type: http
- *       scheme: bearer
- *       bearerFormat: JWT
  *   schemas:
  *     User:
  *       type: object
@@ -61,7 +56,7 @@ router.get('/', async (req, res, next) => {
  * @swagger
  * /api/v1/users/{id}:
  *   get:
- *     summary: Obtiene un usuario por su ID
+ *     summary: Get a user by ID
  *     tags: [Users]
  *     parameters:
  *       - in: path
@@ -69,16 +64,16 @@ router.get('/', async (req, res, next) => {
  *         schema:
  *           type: integer
  *         required: true
- *         description: ID del usuario
+ *         description: User ID
  *     responses:
  *       200:
- *         description: Detalles del usuario
+ *         description: User details
  *         content:
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/User'
  *       404:
- *         description: Usuario no encontrado
+ *         description: User not found
  */
 router.get('/:id', validatorHendler(getUserSchema, 'params'), async (req, res, next) => {
   try {
@@ -94,7 +89,7 @@ router.get('/:id', validatorHendler(getUserSchema, 'params'), async (req, res, n
  * @swagger
  * /api/v1/users:
  *   post:
- *     summary: Crea un nuevo usuario
+ *     summary: Create a new user
  *     tags: [Users]
  *     security:
  *       - bearerAuth: []
@@ -116,7 +111,7 @@ router.get('/:id', validatorHendler(getUserSchema, 'params'), async (req, res, n
  *               - password
  *     responses:
  *       201:
- *         description: Usuario creado exitosamente
+ *         description: User created successfully
  *       401:
  *         description: Unauthorized
  */
@@ -134,7 +129,7 @@ router.post('/', verifyToken, validatorHendler(CreateUserSchema, 'body'), async 
  * @swagger
  * /api/v1/users/{id}:
  *   patch:
- *     summary: Actualiza un usuario existente
+ *     summary: Update an existing user
  *     tags: [Users]
  *     security:
  *       - bearerAuth: []
@@ -144,7 +139,7 @@ router.post('/', verifyToken, validatorHendler(CreateUserSchema, 'body'), async 
  *         schema:
  *           type: integer
  *         required: true
- *         description: ID del usuario
+ *         description: User ID
  *     requestBody:
  *       required: true
  *       content:
@@ -159,11 +154,11 @@ router.post('/', verifyToken, validatorHendler(CreateUserSchema, 'body'), async 
  *                 type: string
  *     responses:
  *       200:
- *         description: Usuario actualizado exitosamente
+ *         description: User updated successfully
  *       401:
  *         description: Unauthorized
  *       404:
- *         description: Usuario no encontrado
+ *         description: User not found
  */
 router.patch('/:id', verifyToken,
   validatorHendler(getUserSchema, 'params'),
@@ -183,7 +178,7 @@ router.patch('/:id', verifyToken,
  * @swagger
  * /api/v1/users/{id}:
  *   delete:
- *     summary: Elimina un usuario
+ *     summary: Delete a user
  *     tags: [Users]
  *     security:
  *       - bearerAuth: []
@@ -193,14 +188,14 @@ router.patch('/:id', verifyToken,
  *         schema:
  *           type: integer
  *         required: true
- *         description: ID del usuario
+ *         description: User ID
  *     responses:
  *       200:
- *         description: Usuario eliminado exitosamente
+ *         description: User deleted successfully
  *       401:
  *         description: Unauthorized
  *       404:
- *         description: Usuario no encontrado
+ *         description: User not found
  */
 router.delete('/:id', verifyToken, async (req, res, next) => {
   try {

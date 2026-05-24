@@ -73,7 +73,7 @@ router.get('/', async (req, res, next)=> {
  * @swagger
  * /api/v1/clients/{id}:
  *   get:
- *     summary: Obtiene un cliente por su ID
+ *     summary: Get a client by ID
  *     tags: [Clients]
  *     parameters:
  *       - in: path
@@ -81,16 +81,16 @@ router.get('/', async (req, res, next)=> {
  *         schema:
  *           type: integer
  *         required: true
- *         description: ID del cliente
+ *         description: Client ID
  *     responses:
  *       200:
- *         description: Detalles del cliente
+ *         description: Client details
  *         content:
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/Client'
  *       404:
- *         description: Cliente no encontrado
+ *         description: Client not found
  */
 router.get('/:id', validatorHendler(getClientSchema, 'params'),
   async (req, res, next)=> {
@@ -111,7 +111,7 @@ router.get('/:id', validatorHendler(getClientSchema, 'params'),
  * @swagger
  * /api/v1/clients:
  *   post:
- *     summary: Crea un nuevo cliente
+ *     summary: Create a new client
  *     tags: [Clients]
  *     security:
  *       - bearerAuth: []
@@ -143,7 +143,7 @@ router.get('/:id', validatorHendler(getClientSchema, 'params'),
  *               - user
  *     responses:
  *       201:
- *         description: Cliente creado exitosamente
+ *         description: Client created successfully
  *         content:
  *           application/json:
  *             schema:
@@ -169,7 +169,7 @@ router.post('/', verifyToken, validatorHendler(createClientSchema, 'body'),
  * @swagger
  * /api/v1/clients/{id}:
  *   patch:
- *     summary: Actualiza un cliente existente
+ *     summary: Update an existing client
  *     tags: [Clients]
  *     security:
  *       - bearerAuth: []
@@ -179,7 +179,7 @@ router.post('/', verifyToken, validatorHendler(createClientSchema, 'body'),
  *         schema:
  *           type: integer
  *         required: true
- *         description: ID del cliente
+ *         description: Client ID
  *     requestBody:
  *       required: true
  *       content:
@@ -197,7 +197,7 @@ router.post('/', verifyToken, validatorHendler(createClientSchema, 'body'),
  *                 type: integer
  *     responses:
  *       200:
- *         description: Cliente actualizado exitosamente
+ *         description: Client updated successfully
  *         content:
  *           application/json:
  *             schema:
@@ -206,7 +206,7 @@ router.post('/', verifyToken, validatorHendler(createClientSchema, 'body'),
  *                 response:
  *                   $ref: '#/components/schemas/Client'
  *       404:
- *         description: Cliente no encontrado
+ *         description: Client not found
  */
 router.patch('/:id', verifyToken,
   validatorHendler(getClientSchema, 'params'),
@@ -228,7 +228,7 @@ router.patch('/:id', verifyToken,
  * @swagger
  * /api/v1/clients/{id}:
  *   delete:
- *     summary: Elimina un cliente
+ *     summary: Delete a client
  *     tags: [Clients]
  *     security:
  *       - bearerAuth: []
@@ -238,10 +238,10 @@ router.patch('/:id', verifyToken,
  *         schema:
  *           type: integer
  *         required: true
- *         description: ID del cliente
+ *         description: Client ID
  *     responses:
  *       200:
- *         description: Cliente eliminado exitosamente
+ *         description: Client deleted successfully
  *         content:
  *           application/json:
  *             schema:
@@ -252,7 +252,7 @@ router.patch('/:id', verifyToken,
  *                 id:
  *                   type: integer
  *       404:
- *         description: Cliente no encontrado
+ *         description: Client not found
  */
 router.delete('/:id', verifyToken, 
   validatorHendler(getClientSchema, 'params'),

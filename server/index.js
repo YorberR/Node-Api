@@ -8,12 +8,11 @@ const authRouter = require('../routes/auth.router')
 function apiRouter (app) {
   const router = express.Router();
   app.use('/api/v1', router);
-  router.use('/products', productRouter)
   router.use('/auth', authRouter)
+  router.use('/products', productRouter)
   router.use('/users', userRouter)
   router.use('/clients', clientRouter)
   router.use('/categories', categoryRouter)
-
 }
 
 module.exports = apiRouter;

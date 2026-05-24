@@ -46,6 +46,14 @@ const swaggerOptions = {
 | POST | /api/v1/products | ✅ Yes |
 | PATCH | /api/v1/products/:id | ✅ Yes |
 | DELETE | /api/v1/products/:id | ✅ Yes |
+| GET | /api/v1/categories | No |
+| POST | /api/v1/categories | ✅ Yes |
+| PATCH | /api/v1/categories/:id | ✅ Yes |
+| DELETE | /api/v1/categories/:id | ✅ Yes |
+| GET | /api/v1/clients | No |
+| POST | /api/v1/clients | ✅ Yes |
+| PATCH | /api/v1/clients/:id | ✅ Yes |
+| DELETE | /api/v1/clients/:id | ✅ Yes |
 
 ---
 **Demo User:** demo@test.com (password: demo123)
@@ -60,6 +68,14 @@ const swaggerOptions = {
       }
     ],
     components: {
+      securitySchemes: {
+        bearerAuth: {
+          type: 'http',
+          scheme: 'bearer',
+          bearerFormat: 'JWT',
+          description: 'Enter JWT token from /auth/demo-login or /auth/login'
+        }
+      },
       schemas: {
         Error: {
           type: 'object',
@@ -130,7 +146,13 @@ const swaggerOptions = {
       }
     }
   },
-  apis: ['./routes/*.js']
+  apis: [
+    './routes/auth.router.js',
+    './routes/products.js',
+    './routes/users.js',
+    './routes/client.js',
+    './routes/category.js'
+  ]
 };
 
 const swaggerDocs = swaggerJsDoc(swaggerOptions);

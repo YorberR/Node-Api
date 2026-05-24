@@ -5,12 +5,15 @@ const getAllProducts = async (query) => {
   try {
     const { limit = 10, offset = 0 } = query;
     const data = await models.Product.findAll({
-      include: ['category'],
+      include: [{
+        association: 'category',
+        attributes: ['id', 'name', 'image']
+      }],
       limit,
       offset
     })
     return {
-      data
+      data: JSON.parse(JSON.stringify(data))
     };
   } catch (error) {
     throw boom.badImplementation('Error getting products');
@@ -20,7 +23,7 @@ const getAllProducts = async (query) => {
 const creteNewProduct = async (body) => {
   try {
     const newProduct = await models.Product.create(body);
-    return newProduct;
+    return JSON.parse(JSON.stringify(newProduct));
   } catch (error) {
     throw boom.badImplementation('Error creating product');
   }
@@ -33,7 +36,7 @@ const updateProduct = async (id, body) => {
       throw boom.notFound('Product not found');
     }
     const response = await product.update(body);
-    return response;
+    return JSON.parse(JSON.stringify(response));
   } catch (error) {
     if (error.isBoom) throw error;
     throw boom.badImplementation('Error updating the product');
@@ -59,11 +62,16 @@ const deleteProduct = async (id) => {
 
 const getOneProduct = async (id) => {
   try {
-    const product = await models.Product.findByPk(id);
+    const product = await models.Product.findByPk(id, {
+      include: [{
+        association: 'category',
+        attributes: ['id', 'name', 'image']
+      }]
+    });
     if (!product) {
       throw boom.notFound('Product not found');
     }
-    return product;
+    return JSON.parse(JSON.stringify(product));
   } catch (error) {
     if (error.isBoom) throw error;
     throw boom.badImplementation('Error searching for the product');
