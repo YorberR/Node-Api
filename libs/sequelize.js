@@ -8,13 +8,13 @@ if (config.dbEngine === 'sqlite') {
   sequelize = new Sequelize({
     dialect: 'sqlite',
     storage: config.sqliteStorage,
-    logging: console.log
+    logging: config.isProd ? false : console.log
   });
 } else {
   const URI = config.dbUrl || `postgres://${config.dbUser}:${config.dbPassword}@${config.dbHost}:${config.dbPort}/${config.dbName}`;
   sequelize = new Sequelize(URI, {
     dialect: 'postgres',
-    logging: console.log
+    logging: config.isProd ? false : console.log
   });
 }
 

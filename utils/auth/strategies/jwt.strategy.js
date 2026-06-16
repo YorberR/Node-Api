@@ -5,7 +5,7 @@ const { removePassword } = require('../../../services/servicesUsers');
 
 const options = {
     jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-    secretOrKey: config.jwtSecret || 'my-super-secret-key-change-in-production'
+    secretOrKey: config.jwtSecret
 };
 
 const jwtStrategy = new Strategy(options, async (payload, done) => {

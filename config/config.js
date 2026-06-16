@@ -16,4 +16,8 @@ const config = {
   jwtSecret: process.env.JWT_SECRET
 }
 
+if (config.isProd && !config.jwtSecret) {
+  throw new Error('JWT_SECRET environment variable is required in production')
+}
+
 module.exports = { config }

@@ -44,7 +44,7 @@ router.post('/demo-login', async (req, res, next) => {
             return res.status(404).json({ message: 'Demo user not found. Please run database seeds.' });
         }
         const user = removePassword(demoUser);
-        const token = jwt.sign({ sub: user.id, role: user.role }, config.jwtSecret || 'my-super-secret-key-change-in-production', { expiresIn: '24h' });
+        const token = jwt.sign({ sub: user.id, role: user.role }, config.jwtSecret, { expiresIn: '24h' });
         res.json({ token });
     } catch (error) {
         next(error);
@@ -89,7 +89,7 @@ router.post('/login',
     passport.authenticate('local', { session: false }), 
     async (req, res, next) => {
         try {
-            const token = jwt.sign({ sub: req.user.id, role: req.user.role }, config.jwtSecret || 'my-super-secret-key-change-in-production', { expiresIn: '20m' });
+            const token = jwt.sign({ sub: req.user.id, role: req.user.role }, config.jwtSecret, { expiresIn: '20m' });
             res.json({ token });
         } catch (error) {
             next(error);

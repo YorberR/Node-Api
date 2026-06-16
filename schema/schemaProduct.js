@@ -18,7 +18,7 @@ const schemaProductCreate = joi.object({
 const updateShemaProduct = joi.object({
   name: name,
   price: price,
-  details: details,
+  description: details,
   categoryId
 });
 

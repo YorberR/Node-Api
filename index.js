@@ -156,7 +156,9 @@ const swaggerOptions = {
 };
 
 const swaggerDocs = swaggerJsDoc(swaggerOptions);
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
+if (process.env.NODE_ENV !== 'production') {
+  app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
+}
 const compression = require('compression');
 const helmet = require('helmet');
 
@@ -193,6 +195,11 @@ app.use(express.urlencoded({ extended: true, limit: '10kb' }));
 app.use(helmet());
 app.use(compression());
 
+// Health check
+app.get('/health', (req, res) => {
+  res.json({ status: 'ok', timestamp: new Date().toISOString(), environment: process.env.NODE_ENV });
+});
+
 // Home route
 app.get('/', (req, res) => {
   res.send('Welcome to Node-API! Check out /api-docs for documentation.');
@@ -200,6 +207,15 @@ app.get('/', (req, res) => {
 
 // API routes
 apiRouter(app);
+
+// 404 handler - must be after all routes
+app.use('*', (req, res) => {
+  res.status(404).json({
+    statusCode: 404,
+    error: 'Not Found',
+    message: `Route ${req.method} ${req.originalUrl} not found`
+  });
+});
 
 // Creation rate limiter for specific endpoints
 const createLimiter = rateLimit({
@@ -262,10 +278,15 @@ const initDatabase = async () => {
   }
 };
 
-// Start server
-app.listen(port, async () => {
-  console.log(`Server running at http://localhost:${port}`);
-  console.log(`API Documentation available at http://localhost:${port}/api-docs`);
-  await initDatabase();
-});
+module.exports = app;
+
+if (require.main === module) {
+  app.listen(port, async () => {
+    console.log(`Server running at http://localhost:${port}`);
+    if (process.env.NODE_ENV !== 'production') {
+      console.log(`API Documentation available at http://localhost:${port}/api-docs`);
+    }
+    await initDatabase();
+  });
+}
 
